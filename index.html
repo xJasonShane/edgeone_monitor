@@ -2128,6 +2128,7 @@
         //通用处理
         const renderTopChart = (results, chartInstance, metricName, mapObject = null) => {
             const data = results[metricName];
+
             if (!data || data.type !== 'top' || !data.data) return;
 
             const sortedData = [...data.data].sort((a, b) => b.Value - a.Value).slice(0, 10);
@@ -2220,8 +2221,11 @@
             if (!data || data.type !== 'top' || !data.data) return;
 
             // Map data to ECharts format
+            // IMPORTANT: The 'name' here must match the region name AFTER nameMap is applied.
+            // Since worldNameMap maps English names to Chinese (e.g. "China" -> "中国大陆"),
+            // our data points must also use the Chinese names (e.g. "中国大陆") to match the map regions.
             const mapData = data.data.map(item => {
-                const name = codeToMapName[item.Key] || item.Key;
+                const name = countryMap[item.Key] || codeToMapName[item.Key] || item.Key;
                 return {
                     name: name,
                     value: item.Value
